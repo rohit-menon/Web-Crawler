@@ -1,4 +1,4 @@
-Dataset-Creator
+Web-Crawler	
 ===============
 
-Create datasets for NLP research from web sources using web crawler based on key words, seed urls, date, time. 
+Reinvent the wheel. Web-Crawler based on key.
