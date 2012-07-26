@@ -27,6 +27,10 @@ public class Crawler {
 		this.seed = new URL(url);
 	}
 
+	/**
+	 * Method starting the crawling operation
+	 * @throws IOException
+	 */
 	public void crawl() throws IOException {
 		BufferedReader in = new BufferedReader(new InputStreamReader(
 				this.seed.openStream()));
