@@ -9,8 +9,7 @@ import java.util.LinkedHashSet;
 
 /**
  * 
- * @author rohitm
- * Crawler which takes seed URL and processes queue of URLs 
+ * @author rohitm Crawler which takes seed URL and processes queue of URLs
  */
 
 public class Crawler {
@@ -23,17 +22,28 @@ public class Crawler {
 		this.visitedURLs = new LinkedHashSet<String>();
 	}
 
+	/**
+	 * Set the seed value for the crawler
+	 * 
+	 * @param value of seed URL
+	 * @throws MalformedURLException
+	 */
 	public void setSeed(String url) throws MalformedURLException {
 		this.seed = new URL(url);
 	}
 
+	public URL getSeed() {
+		return this.seed;
+	}
+
 	/**
 	 * Method starting the crawling operation
+	 * 
 	 * @throws IOException
 	 */
 	public void crawl() throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(
-				this.seed.openStream()));
+		BufferedReader in = new BufferedReader(new InputStreamReader(this
+				.getSeed().openStream()));
 
 		String inputLine;
 		while ((inputLine = in.readLine()) != null)
@@ -42,11 +52,11 @@ public class Crawler {
 	}
 
 	public static void main(String args[]) {
-		try{
-			
+		try {
 			Crawler crawler = new Crawler();
-			crawler.setSeed("http:\\stackoverflow.com");
-		} catch(Exception e) {
+			crawler.setSeed("http://stackoverflow.com");
+			crawler.crawl();
+		} catch (Exception e) {
 			e.printStackTrace();
 		}
 	}
