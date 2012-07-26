@@ -1,38 +1,36 @@
 package rm.nlp;
 
-import java.io.BufferedReader;
 import java.io.IOException;
-import java.io.InputStreamReader;
 import java.net.MalformedURLException;
-import java.net.URL;
 import java.util.LinkedHashSet;
+
+import org.jsoup.Jsoup;
+import org.jsoup.nodes.Document;
 
 /**
  * 
- * @author rohitm Crawler which takes seed URL and processes queue of URLs
+ * @author rohitm 
+ * Crawler which takes seed URL and processes queue of URLs
  */
 
 public class Crawler {
 
-	private URL seed;
+	private final String seed;
 	private LinkedHashSet<String> visitedURLs;
-
-	public Crawler() {
-		this.seed = null;
-		this.visitedURLs = new LinkedHashSet<String>();
-	}
-
+	
 	/**
-	 * Set the seed value for the crawler
 	 * 
-	 * @param value of seed URL
+	 * @param url Seed URL for crawling
 	 * @throws MalformedURLException
 	 */
-	public void setSeed(String url) throws MalformedURLException {
-		this.seed = new URL(url);
+	public Crawler(String url){
+		this.seed = url;
+		this.visitedURLs = new LinkedHashSet<String>();
+		// Add the seed URL to list of URLs already visited
+		this.visitedURLs.add(this.getSeed());
 	}
 
-	public URL getSeed() {
+	public String getSeed() {
 		return this.seed;
 	}
 
@@ -41,20 +39,18 @@ public class Crawler {
 	 * 
 	 * @throws IOException
 	 */
-	public void crawl() throws IOException {
-		BufferedReader in = new BufferedReader(new InputStreamReader(this
-				.getSeed().openStream()));
-
-		String inputLine;
-		while ((inputLine = in.readLine()) != null)
-			System.out.println(inputLine);
-		in.close();
+	public void crawl() throws IOException, MalformedURLException {
+		if(!this.getSeed().matches("^http:.*"))
+			throw new MalformedURLException();
+		else {
+			Document doc = Jsoup.connect(this.getSeed()).get();
+			System.out.println(doc.html());
+		}
 	}
 
 	public static void main(String args[]) {
 		try {
-			Crawler crawler = new Crawler();
-			crawler.setSeed("http://stackoverflow.com");
+			Crawler crawler = new Crawler("http://stackoverflow.com");
 			crawler.crawl();
 		} catch (Exception e) {
 			e.printStackTrace();
