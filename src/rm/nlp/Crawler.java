@@ -21,11 +21,11 @@ public class Crawler {
 	/**
 	 * 
 	 * @param url Seed URL for crawling
-	 * @throws MalformedURLException
 	 */
 	public Crawler(String url){
 		this.seed = url;
 		this.visitedURLs = new LinkedHashSet<String>();
+		
 		// Add the seed URL to list of URLs already visited
 		this.visitedURLs.add(this.getSeed());
 	}
@@ -39,19 +39,45 @@ public class Crawler {
 	 * 
 	 * @throws IOException
 	 */
-	public void crawl() throws IOException, MalformedURLException {
-		if(!this.getSeed().matches("^http:.*"))
+	public void beginCrawl() throws IOException, MalformedURLException {
+		if(!isValidURL(this.getSeed()))
 			throw new MalformedURLException();
-		else {
+		else if (hasRobotsFile(this.getSeed())){
+			
+		} else {
 			Document doc = Jsoup.connect(this.getSeed()).get();
 			System.out.println(doc.html());
+		}	
+	}
+	
+	/**
+	 * Check URL to be crawled is valid
+	 * @param url 
+	 * @return 
+	 */
+	private static boolean isValidURL(String url) {
+		// Check protocol for URL is http
+		if(url.matches("^http:.*")) {
+			return true;
+		} else {
+			return false;
 		}
 	}
 
+	private static boolean hasRobotsFile(String url) throws IOException {
+		Document doc = Jsoup.connect(url + "/robots.txt").get();
+		if(doc == null) {
+			return false;
+		} else {
+			System.out.println(doc.html());
+			return true;
+		}
+	}
+	
 	public static void main(String args[]) {
 		try {
 			Crawler crawler = new Crawler("http://stackoverflow.com");
-			crawler.crawl();
+			crawler.beginCrawl();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}
