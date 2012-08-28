@@ -32,26 +32,21 @@ public class Crawler {
 		robotsParser = RobotsParser.getInstance();
 		
 		// Add the seed URL to list of URLs already visited
-		visitedURLs.add(getSeed());
-	}
-
-	public String getSeed() {
-		return seed;
+		visitedURLs.add(seed);
 	}
 
 	/**
 	 * Method starting the crawling operation
-	 * 
 	 * @throws IOException
 	 */
 	public void beginCrawl() throws IOException, MalformedURLException {
-		if(!isValidURL(getSeed())) {
+		if(!isValidURL(seed)) {
 			throw new MalformedURLException();
 		}
-		if (hasRobotsFile(getSeed())){
-			processRobotsFile(getSeed());
+		if (hasRobotsFile(seed)){
+			processRobotsFile(seed);
 		}
-		Document doc = Jsoup.connect(getSeed()).get();
+		Document doc = Jsoup.connect(seed).get();
 		System.out.println(doc.html());			
 	}
 	

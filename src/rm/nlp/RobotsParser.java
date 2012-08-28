@@ -68,13 +68,20 @@ public class RobotsParser {
 	public static ArrayList<String> getDisallowedURLforUserAgent(String agent) {
 		for(RobotRecord record: robotRecords) {
 			if(record.getUserAgent().equals("*")) {
-				return record.getDisallowUrls();
+				return record.getDisallowedUrls();
 			} 
 		}
 		return null;
 	}
 	
-	
+	public static ArrayList<String> getAllowedURLforUserAgent(String agent) {
+		for(RobotRecord record: robotRecords) {
+			if(record.getUserAgent().equals("*")) {
+				return record.getAllowedUrls();
+			} 
+		}
+		return null;
+	}
 	
 	public void flushRobotRecords() {
 		robotsTxt = null;
