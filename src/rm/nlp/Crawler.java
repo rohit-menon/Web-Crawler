@@ -4,6 +4,7 @@ import java.io.IOException;
 import java.net.MalformedURLException;
 import java.util.LinkedHashSet;
 
+import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 import org.jsoup.nodes.Document;
 
@@ -17,21 +18,23 @@ public class Crawler {
 
 	private final String seed;
 	private LinkedHashSet<String> visitedURLs;
+	private RobotsParser robotsParser;
 	
 	/**
 	 * 
 	 * @param url Seed URL for crawling
 	 */
 	public Crawler(String url){
-		this.seed = url;
-		this.visitedURLs = new LinkedHashSet<String>();
+		seed = url;
+		visitedURLs = new LinkedHashSet<String>();
+		robotsParser = RobotsParser.getInstance();
 		
 		// Add the seed URL to list of URLs already visited
-		this.visitedURLs.add(this.getSeed());
+		visitedURLs.add(getSeed());
 	}
 
 	public String getSeed() {
-		return this.seed;
+		return seed;
 	}
 
 	/**
@@ -40,18 +43,18 @@ public class Crawler {
 	 * @throws IOException
 	 */
 	public void beginCrawl() throws IOException, MalformedURLException {
-		if(!isValidURL(this.getSeed()))
+		if(!isValidURL(getSeed()))
 			throw new MalformedURLException();
-		else if (hasRobotsFile(this.getSeed())){
-			
+		else if (hasRobotsFile(getSeed())){
+			processRobotsFile(robotsParser, getSeed());
 		} else {
-			Document doc = Jsoup.connect(this.getSeed()).get();
+			Document doc = Jsoup.connect(getSeed()).get();
 			System.out.println(doc.html());
 		}	
 	}
 	
 	/**
-	 * Check URL to be crawled is valid
+	 * Check if URL has HTTP Protocol
 	 * @param url 
 	 * @return 
 	 */
@@ -65,18 +68,25 @@ public class Crawler {
 	}
 
 	private static boolean hasRobotsFile(String url) throws IOException {
-		Document doc = Jsoup.connect(url + "/robots.txt").get();
-		if(doc == null) {
-			return false;
-		} else {
-			System.out.println(doc.html());
+		Connection.Response response = Jsoup.connect(url + "/robots.txt").execute();
+		if(response.statusCode() == 200) {
 			return true;
+		} else {
+			return false;
 		}
+	}
+	
+	// Logic should go into RobotsParser
+	private void processRobotsFile(RobotsParser robotsParser, String url) throws IOException{
+		Document doc = Jsoup.connect(url + "/robots.txt").get();
+		System.out.println(doc.body().text());
+		
+		robotsParser.setRobotsTxt(doc.body().text());
 	}
 	
 	public static void main(String args[]) {
 		try {
-			Crawler crawler = new Crawler("http://stackoverflow.com");
+			Crawler crawler = new Crawler("http://google.com");
 			crawler.beginCrawl();
 		} catch (Exception e) {
 			e.printStackTrace();
