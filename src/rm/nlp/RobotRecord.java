@@ -24,7 +24,7 @@ public class RobotRecord {
 		this.userAgent = userAgent;
 	}
 
-	public ArrayList<String> getDisallowedUrls() {
+	public ArrayList<String> getDisallowUrls() {
 		return disallowedUrls;
 	}
 

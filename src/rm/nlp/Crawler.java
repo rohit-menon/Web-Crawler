@@ -18,7 +18,6 @@ public class Crawler {
 
 	private final String seed;
 	private LinkedHashSet<String> visitedURLs;
-	private LinkedHashSet<String> unvisitedURLs;
 	private RobotsParser robotsParser;
 	
 	/**
@@ -28,11 +27,18 @@ public class Crawler {
 	public Crawler(String url){
 		seed = url;
 		visitedURLs = new LinkedHashSet<String>();
-		unvisitedURLs = new LinkedHashSet<String>();
 		robotsParser = RobotsParser.getInstance();
 		
 		// Add the seed URL to list of URLs already visited
 		visitedURLs.add(seed);
+		robotsParser = RobotsParser.getInstance();
+		
+		// Add the seed URL to list of URLs already visited
+		visitedURLs.add(getSeed());
+	}
+
+	public String getSeed() {
+		return seed;
 	}
 
 	/**
@@ -40,14 +46,15 @@ public class Crawler {
 	 * @throws IOException
 	 */
 	public void beginCrawl() throws IOException, MalformedURLException {
-		if(!isValidURL(seed)) {
+		if(!isValidURL(getSeed()))
 			throw new MalformedURLException();
-		}
-		if (hasRobotsFile(seed)){
-			processRobotsFile(seed);
-		}
-		Document doc = Jsoup.connect(seed).get();
-		System.out.println(doc.html());			
+		else if (hasRobotsFile(getSeed())){
+			processRobotsFile(robotsParser, getSeed());
+		} else {
+			Document doc = Jsoup.connect(getSeed()).get();
+			System.out.println(doc.html());
+		}	
+
 	}
 	
 	/**
@@ -64,12 +71,6 @@ public class Crawler {
 		}
 	}
 
-	/**
-	 * Check for existence of robots file
-	 * @param url
-	 * @return
-	 * @throws IOException
-	 */
 	private boolean hasRobotsFile(String url) throws IOException {
 		Connection.Response response = Jsoup.connect(url + "/robots.txt").execute();
 		if(response.statusCode() == 200) {
@@ -79,13 +80,12 @@ public class Crawler {
 		}
 	}
 	
-	/**
-	 * Parse the robots.txt to determine access rights to URLs
-	 * @param url
-	 * @throws IOException
-	 */
-	private void processRobotsFile(String url) throws IOException{
-		robotsParser.setRobotsTxt(Jsoup.connect(url + "/robots.txt").get().body().text());
+	// Logic should go into RobotsParser
+	private void processRobotsFile(RobotsParser robotsParser, String url) throws IOException{
+		Document doc = Jsoup.connect(url + "/robots.txt").get();
+		System.out.println(doc.body().text());
+		
+		robotsParser.setRobotsTxt(doc.body().text());
 	}
 	
 	public static void main(String args[]) {
