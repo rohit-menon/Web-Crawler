@@ -34,11 +34,7 @@ public class Crawler {
 		robotsParser = RobotsParser.getInstance();
 		
 		// Add the seed URL to list of URLs already visited
-		visitedURLs.add(getSeed());
-	}
-
-	public String getSeed() {
-		return seed;
+		visitedURLs.add(seed);
 	}
 
 	/**
@@ -46,15 +42,14 @@ public class Crawler {
 	 * @throws IOException
 	 */
 	public void beginCrawl() throws IOException, MalformedURLException {
-		if(!isValidURL(getSeed()))
+		if(!isValidURL(seed))
 			throw new MalformedURLException();
-		else if (hasRobotsFile(getSeed())){
-			processRobotsFile(robotsParser, getSeed());
+		else if (hasRobotsFile(seed)){
+			processRobotsFile(robotsParser, seed);
 		} else {
-			Document doc = Jsoup.connect(getSeed()).get();
+			Document doc = Jsoup.connect(seed).get();
 			System.out.println(doc.html());
 		}	
-
 	}
 	
 	/**
@@ -80,11 +75,8 @@ public class Crawler {
 		}
 	}
 	
-	// Logic should go into RobotsParser
 	private void processRobotsFile(RobotsParser robotsParser, String url) throws IOException{
 		Document doc = Jsoup.connect(url + "/robots.txt").get();
-		System.out.println(doc.body().text());
-		
 		robotsParser.setRobotsTxt(doc.body().text());
 	}
 	

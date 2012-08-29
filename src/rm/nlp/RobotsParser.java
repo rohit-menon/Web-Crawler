@@ -7,7 +7,7 @@ import org.apache.commons.lang.ArrayUtils;
 public class RobotsParser {
 
 	private String robotsTxt;
-	private ArrayList<RobotRecord> robotRecords;
+	private static ArrayList<RobotRecord> robotRecords;
 	private static RobotsParser robotsParser;
 
 	private RobotsParser() {
@@ -63,16 +63,24 @@ public class RobotsParser {
 				robotRecords.add(record);
 			}
 		}
-
-		
+	}
+	
+	public static ArrayList<String> getDisallowedURLsforUserAgent(String userAgent) {	
 		for(RobotRecord record: robotRecords) {
-			if(record.getUserAgent().equals("*")) {
-				for (String disallowedUrl : record.getDisallowUrls()) {
-					System.out.println(disallowedUrl);
-				}
+			if(record.getUserAgent().equals(userAgent)) {
+				return record.getDisallowedUrls();
 			}
 		}
-
+		return null;
+	}
+	
+	public static ArrayList<String> getAllowedURLsforUserAgent(String userAgent) {	
+		for(RobotRecord record: robotRecords) {
+			if(record.getUserAgent().equals(userAgent)) {
+				return record.getAllowedUrls();
+			}
+		}
+		return null;
 	}
 	
 	public void flushRobotRecords() {
