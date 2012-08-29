@@ -3,19 +3,19 @@ package rm.nlp;
 import java.util.ArrayList;
 
 public class RobotRecord {
-	
+
 	private String userAgent;
 	private ArrayList<String> disallowedUrls;
 	private ArrayList<String> allowedUrls;
 	private ArrayList<String> siteMapUrls;
-	
+
 	public RobotRecord(String userAgent) {
 		this.userAgent = userAgent;
 		this.disallowedUrls = new ArrayList<String>();
 		this.allowedUrls = new ArrayList<String>();
 		this.siteMapUrls = new ArrayList<String>();
 	}
-	
+
 	public String getUserAgent() {
 		return userAgent;
 	}

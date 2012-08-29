@@ -13,14 +13,14 @@ public class RobotsParser {
 	private RobotsParser() {
 		robotRecords = new ArrayList<RobotRecord>();
 	}
-	
+
 	public static RobotsParser getInstance() {
-			if(robotsParser == null) {
-				synchronized(RobotsParser.class) {
-					robotsParser = new RobotsParser();
-				}
+		if (robotsParser == null) {
+			synchronized (RobotsParser.class) {
+				robotsParser = new RobotsParser();
 			}
-			return robotsParser;
+		}
+		return robotsParser;
 	}
 
 	public void setRobotsTxt(String data) {
@@ -46,11 +46,13 @@ public class RobotsParser {
 		for (int i = 0; i < lines.length;) {
 			if (lines[i].equalsIgnoreCase("User-Agent:")) {
 				String userAgentName = lines[++i];
-				while(!lines[i+1].equalsIgnoreCase("Disallow:") && !lines[i+1].equalsIgnoreCase("Allow:")) {
+				while (!lines[i + 1].equalsIgnoreCase("Disallow:")
+						&& !lines[i + 1].equalsIgnoreCase("Allow:")) {
 					userAgentName = userAgentName.concat(lines[++i]);
 				}
 				RobotRecord record = new RobotRecord(userAgentName);
-				while (i< lines.length && !lines[i].equalsIgnoreCase("User-Agent:")) {
+				while (i < lines.length
+						&& !lines[i].equalsIgnoreCase("User-Agent:")) {
 					if (lines[i].equalsIgnoreCase("Disallow:")) {
 						record.setDisallowedUrls(lines[++i]);
 					} else if (lines[i].equalsIgnoreCase("Allow:")) {
@@ -64,28 +66,29 @@ public class RobotsParser {
 			}
 		}
 	}
-	
-	public static ArrayList<String> getDisallowedURLsforUserAgent(String userAgent) {	
-		for(RobotRecord record: robotRecords) {
-			if(record.getUserAgent().equals(userAgent)) {
+
+	public static ArrayList<String> getDisallowedURLsforUserAgent(
+			String userAgent) {
+		for (RobotRecord record : robotRecords) {
+			if (record.getUserAgent().equals(userAgent)) {
 				return record.getDisallowedUrls();
 			}
 		}
 		return null;
 	}
-	
-	public static ArrayList<String> getAllowedURLsforUserAgent(String userAgent) {	
-		for(RobotRecord record: robotRecords) {
-			if(record.getUserAgent().equals(userAgent)) {
+
+	public static ArrayList<String> getAllowedURLsforUserAgent(String userAgent) {
+		for (RobotRecord record : robotRecords) {
+			if (record.getUserAgent().equals(userAgent)) {
 				return record.getAllowedUrls();
 			}
 		}
 		return null;
 	}
-	
+
 	public void flushRobotRecords() {
 		robotsTxt = null;
 		robotRecords = new ArrayList<RobotRecord>();
 	}
-	
+
 }
