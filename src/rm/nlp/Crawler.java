@@ -31,10 +31,6 @@ public class Crawler {
 		
 		// Add the seed URL to list of URLs already visited
 		visitedURLs.add(seed);
-		robotsParser = RobotsParser.getInstance();
-		
-		// Add the seed URL to list of URLs already visited
-		visitedURLs.add(seed);
 	}
 
 	/**
