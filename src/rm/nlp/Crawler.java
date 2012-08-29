@@ -52,7 +52,7 @@ public class Crawler {
 		Document doc = Jsoup.connect(seed).get();
 		System.out.println(doc.html());
 		Elements links = doc.select("a[href]");
-		for(Element link : links) {
+		for (Element link : links) {
 			System.out.println(link.attr("href"));
 			unvisitedURLs.add(link.attr("href"));
 		}
@@ -76,11 +76,7 @@ public class Crawler {
 	private boolean hasRobotsFile(String url) throws IOException {
 		Connection.Response response = Jsoup.connect(url + "/robots.txt")
 				.execute();
-		if (response.statusCode() == 200) {
-			return true;
-		} else {
-			return false;
-		}
+		return (response.statusCode() == 200);
 	}
 
 	private void processRobotsFile(RobotsParser robotsParser, String url)
