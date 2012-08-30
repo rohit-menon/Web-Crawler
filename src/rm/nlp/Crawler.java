@@ -2,6 +2,7 @@ package rm.nlp;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.util.Iterator;
 import java.util.LinkedHashSet;
 
 import org.jsoup.Connection;
@@ -17,24 +18,24 @@ import org.jsoup.select.Elements;
 
 public class Crawler {
 
-	private final String seed;
+	private final String seedURL;
 	private LinkedHashSet<String> visitedURLs;
 	private LinkedHashSet<String> unvisitedURLs;
 	private RobotsParser robotsParser;
 
 	/**
 	 * 
-	 * @param url
-	 *            Seed URL for crawling
+	 * @param url Seed URL for crawling
+	 *            
 	 */
 	public Crawler(String url) {
-		seed = url;
+		seedURL = url;
 		visitedURLs = new LinkedHashSet<String>();
 		unvisitedURLs = new LinkedHashSet<String>();
 		robotsParser = RobotsParser.getInstance();
 
 		// Add the seed URL to list of URLs already visited
-		visitedURLs.add(seed);
+		visitedURLs.add(seedURL);
 	}
 
 	/**
@@ -43,19 +44,32 @@ public class Crawler {
 	 * @throws IOException
 	 */
 	public void beginCrawl() throws IOException, MalformedURLException {
-		if (!isValidURL(seed)) {
+		if (!isValidURL(seedURL)) {
 			throw new MalformedURLException();
 		}
-		if (hasRobotsFile(seed)) {
-			processRobotsFile(robotsParser, seed);
+		if (hasRobotsFile(seedURL)) {
+			robotsParser.retrieveRobotsFile(seedURL);
 		}
-		Document doc = Jsoup.connect(seed).get();
+		Document doc = Jsoup.connect(seedURL).get();
 		System.out.println(doc.html());
 		Elements links = doc.select("a[href]");
 		for (Element link : links) {
-			System.out.println(link.attr("href"));
-			unvisitedURLs.add(link.attr("href"));
-		}
+			String[] normalizedLink = link.attr("abs:href").split("\\?");
+			if(isValidURL(normalizedLink[0])) {
+				unvisitedURLs.add(normalizedLink[0]);
+				System.out.println(normalizedLink[0]);
+			}
+		}	
+		
+		// Introduce Thread to handle this 
+		if(!RobotsParser.isDisallowedAllURLsForUserAgent("*")) {
+			Iterator<String> itr = unvisitedURLs.iterator();
+			while(itr.hasNext()) {
+				// if(!RobotsParser.isDisallowedURLForUserAgent("*", , itr.next())) {
+					
+				//}
+			}
+		}	
 	}
 
 	/**
@@ -77,12 +91,6 @@ public class Crawler {
 		Connection.Response response = Jsoup.connect(url + "/robots.txt")
 				.execute();
 		return (response.statusCode() == 200);
-	}
-
-	private void processRobotsFile(RobotsParser robotsParser, String url)
-			throws IOException {
-		Document doc = Jsoup.connect(url + "/robots.txt").get();
-		robotsParser.setRobotsTxt(doc.body().text());
 	}
 
 	public static void main(String args[]) {
