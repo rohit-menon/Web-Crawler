@@ -8,7 +8,7 @@ import org.jsoup.Jsoup;
 
 public class RobotsParser {
 
-	private String robotsTxt;
+	private static String robotsTxt;
 	private static ArrayList<RobotRecord> robotRecords;
 	private static RobotsParser robotsParser;
 
@@ -79,7 +79,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
+	private static ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getAllowedUrls();
@@ -88,7 +88,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static boolean isDisallowedAllURLsForUserAgent(String userAgent) {
+	public static boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
 			if (url.equals("/")) {
@@ -98,7 +98,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public static boolean isDisallowedURLForUserAgent(String userAgent,
+	public static boolean hasURLDisallowedForUserAgent(String userAgent,
 			String seedURL, String crawledURL) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
@@ -109,7 +109,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public void flushRobotRecords() {
+	public static void flushRobotRecords() {
 		robotsTxt = null;
 		robotRecords = new ArrayList<RobotRecord>();
 	}

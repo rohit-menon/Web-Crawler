@@ -25,8 +25,9 @@ public class Crawler {
 
 	/**
 	 * 
-	 * @param url Seed URL for crawling
-	 *            
+	 * @param url
+	 *            Seed URL for crawling
+	 * 
 	 */
 	public Crawler(String url) {
 		seedURL = url;
@@ -55,21 +56,22 @@ public class Crawler {
 		Elements links = doc.select("a[href]");
 		for (Element link : links) {
 			String[] normalizedLink = link.attr("abs:href").split("\\?");
-			if(isValidURL(normalizedLink[0])) {
+			if (isValidURL(normalizedLink[0])) {
 				unvisitedURLs.add(normalizedLink[0]);
 				System.out.println(normalizedLink[0]);
 			}
-		}	
-		
-		// Introduce Thread to handle this 
-		if(!RobotsParser.isDisallowedAllURLsForUserAgent("*")) {
+		}
+
+		// Introduce Thread to handle this
+		if (!RobotsParser.hasAllURLsDisallowedForUserAgent("*")) {
 			Iterator<String> itr = unvisitedURLs.iterator();
-			while(itr.hasNext()) {
-				// if(!RobotsParser.isDisallowedURLForUserAgent("*", , itr.next())) {
-					
-				//}
+			while (itr.hasNext()) {
+				// if(!RobotsParser.isDisallowedURLForUserAgent("*", ,
+				// itr.next())) {
+
+				// }
 			}
-		}	
+		}
 	}
 
 	/**
