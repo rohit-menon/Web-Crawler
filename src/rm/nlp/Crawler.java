@@ -81,7 +81,6 @@ public class Crawler {
 	 * @return
 	 */
 	private static boolean isValidURL(String url) {
-		// Check protocol for URL is http
 		if (url.matches("^http:.*")) {
 			return true;
 		} else {
@@ -97,7 +96,7 @@ public class Crawler {
 
 	public static void main(String args[]) {
 		try {
-			Crawler crawler = new Crawler("http://google.com");
+			Crawler crawler = new Crawler("http://java.sun.com");
 			crawler.beginCrawl();
 		} catch (Exception e) {
 			e.printStackTrace();

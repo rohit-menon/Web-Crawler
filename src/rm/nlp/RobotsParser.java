@@ -31,7 +31,7 @@ public class RobotsParser {
 	}
 
 	private void populateRobotRecords() {
-		String[] lines = robotsTxt.split("\\s+");
+		String[] lines = Jsoup.parse(robotsTxt).text().split("\\s+");
 
 		// Remove comments and empty lines
 		for (int i = 0; i < lines.length; i++) {
