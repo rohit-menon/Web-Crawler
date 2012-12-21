@@ -1,10 +1,11 @@
-package rm.nlp;
+package com.rm.nlp.webcrawler.robots;
 
 import java.io.IOException;
 import java.util.ArrayList;
 
 import org.apache.commons.lang.ArrayUtils;
 import org.jsoup.Jsoup;
+
 
 public class RobotsParser {
 

@@ -1,4 +1,4 @@
-package rm.nlp;
+package com.rm.nlp.webcrawler.robots;
 
 import java.util.ArrayList;
 
