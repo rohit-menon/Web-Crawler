@@ -11,7 +11,7 @@ public class CrawlerThread implements Runnable{
 	
 	public void run() {
 		try {
-			if(!Crawler.unvisitedURLs.isEmpty()) {
+			if(!CrawlerManager.unvisitedURLs.isEmpty()) {
 				
 			}
 		} catch(Exception e) {

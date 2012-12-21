@@ -16,7 +16,7 @@ import org.jsoup.select.Elements;
  * @author rohitm Crawler which takes seed URL and processes queue of URLs
  */
 
-public class Crawler {
+public class CrawlerManager {
 
 	private final String seedURL;
 	public static LinkedHashSet<String> visitedURLs;
@@ -28,7 +28,7 @@ public class Crawler {
 	 * @param url Seed URL for crawling
 	 * 
 	 */
-	public Crawler(String url) {
+	public CrawlerManager(String url) {
 		seedURL = url;
 		visitedURLs = new LinkedHashSet<String>();
 		unvisitedURLs = new LinkedHashSet<String>();
@@ -95,7 +95,7 @@ public class Crawler {
 
 	public static void main(String args[]) {
 		try {
-			Crawler crawler = new Crawler("http://java.sun.com");
+			CrawlerManager crawler = new CrawlerManager("http://java.sun.com");
 			crawler.beginCrawl();
 		} catch (Exception e) {
 			e.printStackTrace();
