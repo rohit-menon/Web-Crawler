@@ -19,14 +19,13 @@ import org.jsoup.select.Elements;
 public class Crawler {
 
 	private final String seedURL;
-	private LinkedHashSet<String> visitedURLs;
-	private LinkedHashSet<String> unvisitedURLs;
+	public static LinkedHashSet<String> visitedURLs;
+	public static LinkedHashSet<String> unvisitedURLs;
 	private RobotsParser robotsParser;
 
 	/**
 	 * 
-	 * @param url
-	 *            Seed URL for crawling
+	 * @param url Seed URL for crawling
 	 * 
 	 */
 	public Crawler(String url) {
