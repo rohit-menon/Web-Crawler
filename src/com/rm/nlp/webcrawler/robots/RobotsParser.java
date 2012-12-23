@@ -12,25 +12,16 @@ public class RobotsParser {
 	private static ArrayList<RobotRecord> robotRecords;
 	private static RobotsParser robotsParser;
 
-	private RobotsParser() {
+	static {
 		robotRecords = new ArrayList<RobotRecord>();
 	}
 
-	public static RobotsParser getInstance() {
-		if (robotsParser == null) {
-			synchronized (RobotsParser.class) {
-				robotsParser = new RobotsParser();
-			}
-		}
-		return robotsParser;
-	}
-
-	public void retrieveRobotsFile(String url) throws IOException {
+	public static void retrieveRobotsFile(String url) throws IOException {
 		robotsTxt = Jsoup.connect(url + "/robots.txt").get().toString();
 		populateRobotRecords();
 	}
 
-	private void populateRobotRecords() {
+	private static void populateRobotRecords() {
 		String[] lines = Jsoup.parse(robotsTxt).text().split("\\s+");
 
 		// Remove comments and empty lines
@@ -75,7 +66,7 @@ public class RobotsParser {
 		}
 	}
 
-	private ArrayList<String> getDisallowedURLsForUserAgent(String userAgent) {
+	public static ArrayList<String> getDisallowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getDisallowedUrls();
@@ -84,7 +75,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	private ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
+	public static ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getAllowedUrls();
@@ -93,7 +84,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
+	public static boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
 			if (url.equals("/")) {
@@ -103,7 +94,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public boolean hasURLDisallowedForUserAgent(String userAgent,
+	public static boolean hasURLDisallowedForUserAgent(String userAgent,
 			String seedURL, String crawledURL) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
