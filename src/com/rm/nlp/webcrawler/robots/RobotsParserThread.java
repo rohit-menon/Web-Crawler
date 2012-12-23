@@ -6,22 +6,41 @@ import java.util.ArrayList;
 import org.apache.commons.lang.ArrayUtils;
 import org.jsoup.Jsoup;
 
-public class RobotsParser {
+public class RobotsParserThread implements Runnable {
 
-	private static String robotsTxt;
-	private static ArrayList<RobotRecord> robotRecords;
-	private static RobotsParser robotsParser;
+	private String rootURL;
+	private String robotsTxt;
+	private ArrayList<RobotRecord> robotRecords;
+	private Thread robotsParser;
 
-	static {
+
+	public RobotsParserThread() {
 		robotRecords = new ArrayList<RobotRecord>();
+		robotsParser = new Thread(this, "RobotsParserThread");
+	}
+	
+	public String getRootURL() {
+		return rootURL;
 	}
 
-	public static void retrieveRobotsFile(String url) throws IOException {
+	public void setRootURL(String rootURL) {
+		this.rootURL = rootURL;
+	}
+
+	public void run() {
+		try{
+			retrieveRobotsFile(rootURL);
+		} catch (Exception e) {
+			e.printStackTrace();
+		}
+	}
+
+	private void retrieveRobotsFile(String url) throws IOException {
 		robotsTxt = Jsoup.connect(url + "/robots.txt").get().toString();
 		populateRobotRecords();
 	}
 
-	private static void populateRobotRecords() {
+	private void populateRobotRecords() {
 		String[] lines = Jsoup.parse(robotsTxt).text().split("\\s+");
 
 		// Remove comments and empty lines
@@ -66,7 +85,7 @@ public class RobotsParser {
 		}
 	}
 
-	public static ArrayList<String> getDisallowedURLsForUserAgent(String userAgent) {
+	public ArrayList<String> getDisallowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getDisallowedUrls();
@@ -75,7 +94,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
+	public ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getAllowedUrls();
@@ -84,7 +103,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
+	public boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
 			if (url.equals("/")) {
@@ -94,7 +113,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public static boolean hasURLDisallowedForUserAgent(String userAgent,
+	public boolean hasURLDisallowedForUserAgent(String userAgent,
 			String seedURL, String crawledURL) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
@@ -105,7 +124,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public static void flushRobotRecords() {
+	public void flushRobotRecords() {
 		robotsTxt = null;
 		robotRecords = new ArrayList<RobotRecord>();
 	}

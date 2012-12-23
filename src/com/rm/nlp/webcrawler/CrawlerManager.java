@@ -10,8 +10,6 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.rm.nlp.webcrawler.robots.RobotsParser;
-
 /**
  * 
  * @author Rohit Menon 
@@ -23,7 +21,6 @@ public class CrawlerManager {
 	private final String seedURL;
 	public static LinkedHashSet<String> visitedURLs;
 	public static LinkedHashSet<String> unvisitedURLs;
-	private RobotsParser robotsParser;
 
 	/**
 	 * @param url
@@ -48,7 +45,7 @@ public class CrawlerManager {
 	 */
 	public void beginCrawl() throws IOException, InvalidParameterException {
 		
-		new CrawlerThread();
+		CrawlerThread t = new CrawlerThread();
 //		if (CrawlerUtil.hasRobotsFile(seedURL)) {
 //			RobotsParser.retrieveRobotsFile(seedURL);
 //			// check if can be parsed
