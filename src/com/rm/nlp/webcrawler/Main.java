@@ -7,8 +7,9 @@ public class Main {
 	 */
 	public static void main(String args[]) {
 		try {
-			CrawlerManager crawler = new CrawlerManager("http://java.sun.com");
-			crawler.beginCrawl();
+			//Command line parameter to take user input of seed
+			CrawlerManager crawlerManager = new CrawlerManager("http://www.oracle.com/technetwork/java");
+			crawlerManager.beginCrawl();
 		} catch (Exception e) {
 			e.printStackTrace();
 		}

@@ -9,8 +9,7 @@ public class RobotRecord {
 	private ArrayList<String> allowedUrls;
 	private ArrayList<String> siteMapUrls;
 
-	public RobotRecord(String userAgent) {
-		this.userAgent = userAgent;
+	public RobotRecord() {
 		this.disallowedUrls = new ArrayList<String>();
 		this.allowedUrls = new ArrayList<String>();
 		this.siteMapUrls = new ArrayList<String>();

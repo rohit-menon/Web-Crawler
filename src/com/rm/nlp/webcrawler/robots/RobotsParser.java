@@ -6,7 +6,6 @@ import java.util.ArrayList;
 import org.apache.commons.lang.ArrayUtils;
 import org.jsoup.Jsoup;
 
-
 public class RobotsParser {
 
 	private static String robotsTxt;
@@ -48,12 +47,18 @@ public class RobotsParser {
 		// Classify URLs to disallowed, allowed and Sitemaps
 		for (int i = 0; i < lines.length;) {
 			if (lines[i].equalsIgnoreCase("User-Agent:")) {
+				RobotRecord record = new RobotRecord();
 				String userAgentName = lines[++i];
-				while (!lines[i + 1].equalsIgnoreCase("Disallow:")
-						&& !lines[i + 1].equalsIgnoreCase("Allow:")) {
-					userAgentName = userAgentName.concat(lines[++i]);
+				if (lines[i + 1].equalsIgnoreCase("Sitemap:")) {
+					record.setSiteMapUrls(lines[i + 2]);
+					i = i + 3;
+				} else {
+					while (!lines[i + 1].equalsIgnoreCase("Disallow:")
+							&& !lines[i + 1].equalsIgnoreCase("Allow:")) {
+						userAgentName = userAgentName.concat(lines[++i]);
+					}
 				}
-				RobotRecord record = new RobotRecord(userAgentName);
+				record.setUserAgent(userAgentName);
 				while (i < lines.length
 						&& !lines[i].equalsIgnoreCase("User-Agent:")) {
 					if (lines[i].equalsIgnoreCase("Disallow:")) {
@@ -70,8 +75,7 @@ public class RobotsParser {
 		}
 	}
 
-	private static ArrayList<String> getDisallowedURLsForUserAgent(
-			String userAgent) {
+	private ArrayList<String> getDisallowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getDisallowedUrls();
@@ -80,7 +84,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	private static ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
+	private ArrayList<String> getAllowedURLsForUserAgent(String userAgent) {
 		for (RobotRecord record : robotRecords) {
 			if (record.getUserAgent().equals(userAgent)) {
 				return record.getAllowedUrls();
@@ -89,7 +93,7 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
+	public boolean hasAllURLsDisallowedForUserAgent(String userAgent) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {
 			if (url.equals("/")) {
@@ -99,7 +103,7 @@ public class RobotsParser {
 		return false;
 	}
 
-	public static boolean hasURLDisallowedForUserAgent(String userAgent,
+	public boolean hasURLDisallowedForUserAgent(String userAgent,
 			String seedURL, String crawledURL) {
 		ArrayList<String> disallowedURLs = getDisallowedURLsForUserAgent(userAgent);
 		for (String url : disallowedURLs) {

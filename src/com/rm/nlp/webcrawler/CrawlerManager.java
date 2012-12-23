@@ -2,6 +2,7 @@ package com.rm.nlp.webcrawler;
 
 import java.io.IOException;
 import java.net.MalformedURLException;
+import java.security.InvalidParameterException;
 import java.util.Iterator;
 import java.util.LinkedHashSet;
 
@@ -26,81 +27,46 @@ public class CrawlerManager {
 	private RobotsParser robotsParser;
 
 	/**
-	 * 
-	 * @param url Seed URL for crawling
-	 * 
+	 * @param url
+	 * Seed URL for crawling
 	 */
-	public CrawlerManager(String url) {
-		seedURL = url;
-		visitedURLs = new LinkedHashSet<String>();
-		unvisitedURLs = new LinkedHashSet<String>();
-		robotsParser = RobotsParser.getInstance();
+	public CrawlerManager(String url) throws MalformedURLException{
+		if (CrawlerUtil.isValidURL(url)) {
+			this.seedURL = url;
+			visitedURLs = new LinkedHashSet<String>();
+			unvisitedURLs = new LinkedHashSet<String>();
+			robotsParser = RobotsParser.getInstance();
 
-		// Add the seed URL to list of URLs already visited
-		visitedURLs.add(seedURL);
+			// Add the seed URL to list of URLs already visited
+			visitedURLs.add(seedURL);
+		}
+		else
+			throw new MalformedURLException();
 	}
 
 	/**
 	 * Method starting the crawling operation
-	 * 
 	 * @throws IOException
 	 */
-	public void beginCrawl() throws IOException, MalformedURLException {
-		if (!isValidURL(seedURL)) {
-			throw new MalformedURLException();
-		}
-		if (hasRobotsFile(seedURL)) {
+	public void beginCrawl() throws IOException, InvalidParameterException {
+		if (CrawlerUtil.hasRobotsFile(seedURL)) {
 			robotsParser.retrieveRobotsFile(seedURL);
+			//check if can be parsed
+			if(robotsParser.hasAllURLsDisallowedForUserAgent("*")){
+				// change the exception
+				throw new InvalidParameterException();
+			}
 		}
+		
 		Document doc = Jsoup.connect(seedURL).get();
 		System.out.println(doc.html());
 		Elements links = doc.select("a[href]");
 		for (Element link : links) {
 			String[] normalizedLink = link.attr("abs:href").split("\\?");
-			if (isValidURL(normalizedLink[0])) {
+			if (CrawlerUtil.isValidURL(normalizedLink[0])) {
 				unvisitedURLs.add(normalizedLink[0]);
 				System.out.println(normalizedLink[0]);
 			}
-		}
-
-		// Introduce Thread to handle this
-		if (!RobotsParser.hasAllURLsDisallowedForUserAgent("*")) {
-			Iterator<String> itr = unvisitedURLs.iterator();
-			while (itr.hasNext()) {
-				// if(!RobotsParser.isDisallowedURLForUserAgent("*", ,
-				// itr.next())) {
-
-				// }
-			}
-		}
-	}
-
-	/**
-	 * Check if URL has HTTP Protocol
-	 * 
-	 * @param url
-	 * @return
-	 */
-	private static boolean isValidURL(String url) {
-		if (url.matches("^http:.*")) {
-			return true;
-		} else {
-			return false;
-		}
-	}
-
-	private boolean hasRobotsFile(String url) throws IOException {
-		Connection.Response response = Jsoup.connect(url + "/robots.txt")
-				.execute();
-		return (response.statusCode() == 200);
-	}
-
-	public static void main(String args[]) {
-		try {
-			CrawlerManager crawler = new CrawlerManager("http://java.sun.com");
-			crawler.beginCrawl();
-		} catch (Exception e) {
-			e.printStackTrace();
 		}
 	}
 }
