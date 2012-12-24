@@ -1,6 +1,5 @@
 package com.rm.nlp.webcrawler;
 
-import java.security.InvalidParameterException;
 import java.util.Iterator;
 
 import org.jsoup.Jsoup;
@@ -8,47 +7,46 @@ import org.jsoup.nodes.Document;
 import org.jsoup.nodes.Element;
 import org.jsoup.select.Elements;
 
-import com.rm.nlp.webcrawler.robots.RobotsParserThread;
+import com.rm.nlp.webcrawler.robots.RobotsParser;
 
 public class CrawlerThread implements Runnable {
-
-	private Thread crawlerThread;
-	RobotsParserThread robotsParser;
-
-	public CrawlerThread() {
-		crawlerThread = new Thread(this, "Crawler Thread");
-		robotsParser = new RobotsParserThread();
-		crawlerThread.start();
-	}
 
 	public void run() {
 		try {
 			if (!CrawlerManager.unvisitedURLs.isEmpty()) {
-				Iterator<String> iterator = CrawlerManager.unvisitedURLs
+				Iterator<URL> iterator = CrawlerManager.unvisitedURLs
 						.iterator();
-				String currentURL = iterator.next();
+				URL currentURL = iterator.next();
+				String finalURL = null;
+				boolean isAllowed = false;
+
+				// Seed URL
+				if (currentURL.getURL() == null) {
+					finalURL = currentURL.getSeedURL();
+					isAllowed = true;
+				}
+				else if (!RobotsParser.hasURLDisallowedForUserAgent(
+						currentURL.getSeedURL(), "*", currentURL.getURL())) {
+					finalURL = currentURL.getURL();
+					isAllowed = true;
+				}
 				
-				if (CrawlerUtil.hasRobotsFile(currentURL)) {
-					robotsParser.setRootURL(currentURL);
-					robotsParser.run();
-					if (robotsParser.hasAllURLsDisallowedForUserAgent("*")) {
-						// change the exception
-						throw new InvalidParameterException();
+				if(isAllowed && !CrawlerUtil.checkRobots(finalURL)) {
+					Document doc = Jsoup.connect(finalURL).get();
+					// System.out.println(doc.html());
+					Elements links = doc.select("a[href]");
+					for (Element link : links) {
+						String[] normalizedLink = link.attr("abs:href").split(
+								"\\?");
+						if (CrawlerUtil.isValidURL(normalizedLink[0])) {
+							CrawlerManager.unvisitedURLs.add(new URL(finalURL,
+									normalizedLink[0]));
+							System.out.println(normalizedLink[0]);
+						}
 					}
 				}
-
-				Document doc = Jsoup.connect(currentURL).get();
-				// System.out.println(doc.html());
-				Elements links = doc.select("a[href]");
-				for (Element link : links) {
-					String[] normalizedLink = link.attr("abs:href")
-							.split("\\?");
-					if (CrawlerUtil.isValidURL(normalizedLink[0])) {
-						CrawlerManager.unvisitedURLs.add(normalizedLink[0]);
-						System.out.println(normalizedLink[0]);
-					}
-				}
-
+				
+				CrawlerManager.visitedURLs.add(currentURL);
 				CrawlerManager.unvisitedURLs.remove(currentURL);
 			}
 		} catch (Exception e) {

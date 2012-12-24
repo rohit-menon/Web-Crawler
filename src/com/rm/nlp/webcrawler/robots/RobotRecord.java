@@ -1,20 +1,31 @@
 package com.rm.nlp.webcrawler.robots;
 
 import java.util.ArrayList;
+import com.rm.nlp.webcrawler.URL;
 
 public class RobotRecord {
 
+	private URL seedURL;
 	private String userAgent;
-	private ArrayList<String> disallowedUrls;
-	private ArrayList<String> allowedUrls;
-	private ArrayList<String> siteMapUrls;
+	private ArrayList<URL> disallowedURLs;
+	private ArrayList<URL> allowedURLs;
+	private ArrayList<URL> siteMapURLs;
 
-	public RobotRecord() {
-		this.disallowedUrls = new ArrayList<String>();
-		this.allowedUrls = new ArrayList<String>();
-		this.siteMapUrls = new ArrayList<String>();
+	public RobotRecord(URL seedURL) {
+		this.seedURL = seedURL;
+		this.disallowedURLs = new ArrayList<URL>();
+		this.allowedURLs = new ArrayList<URL>();
+		this.siteMapURLs = new ArrayList<URL>();
 	}
 
+	public URL getSeedURL() {
+		return seedURL;
+	}
+
+	public void setSeedURL(URL seedURL) {
+		this.seedURL = seedURL;
+	}
+	
 	public String getUserAgent() {
 		return userAgent;
 	}
@@ -23,27 +34,27 @@ public class RobotRecord {
 		this.userAgent = userAgent;
 	}
 
-	public ArrayList<String> getDisallowedUrls() {
-		return disallowedUrls;
+	public ArrayList<URL> getDisallowedURLs() {
+		return disallowedURLs;
 	}
 
-	public void setDisallowedUrls(String disallowedUrl) {
-		this.disallowedUrls.add(disallowedUrl);
+	public void setDisallowedURLs(URL disallowedURL) {
+		this.disallowedURLs.add(disallowedURL);
 	}
 
-	public ArrayList<String> getAllowedUrls() {
-		return allowedUrls;
+	public ArrayList<URL> getAllowedURLs() {
+		return allowedURLs;
 	}
 
-	public void setAllowedUrls(String allowedUrl) {
-		this.allowedUrls.add(allowedUrl);
+	public void setAllowedURLs(URL allowedURL) {
+		this.allowedURLs.add(allowedURL);
 	}
 
-	public ArrayList<String> getSiteMapUrls() {
-		return siteMapUrls;
+	public ArrayList<URL> getSiteMapURLs() {
+		return siteMapURLs;
 	}
 
-	public void setSiteMapUrls(String siteMapUrls) {
-		this.siteMapUrls.add(siteMapUrls);
+	public void setSiteMapURLs(URL siteMapURLs) {
+		this.siteMapURLs.add(siteMapURLs);
 	}
 }

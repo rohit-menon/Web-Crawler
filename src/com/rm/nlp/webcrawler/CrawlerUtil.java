@@ -5,6 +5,8 @@ import java.io.IOException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import com.rm.nlp.webcrawler.robots.RobotsParser;
+
 public class CrawlerUtil {
 
 	/**
@@ -25,6 +27,16 @@ public class CrawlerUtil {
 		Connection.Response response = Jsoup.connect(url + "/robots.txt")
 				.execute();
 		return (response.statusCode() == 200);
+	}
+	
+	public static boolean checkRobots(String url) throws IOException{
+		if (CrawlerUtil.hasRobotsFile(url)) {
+			RobotsParser.retrieveRobotsFile(url);
+			if (RobotsParser.hasAllURLsDisallowedForUserAgent(url, "*")) {
+				return true;
+			}
+		}
+		return false;
 	}
 	
 }
