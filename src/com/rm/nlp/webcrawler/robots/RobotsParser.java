@@ -11,11 +11,13 @@ import com.rm.nlp.webcrawler.URL;
 
 public class RobotsParser {
 
-	private static HashMap<String, RobotRecord> robotRecords = new HashMap<String, RobotRecord>();
+	public static HashMap<String, RobotRecord> robotRecords = new HashMap<String, RobotRecord>();
 
-	public static synchronized void retrieveRobotsFile(String seedURL) throws IOException {
-		String robotsTxt = Jsoup.connect(seedURL + "/robots.txt").get().toString();
-		
+	public static synchronized void retrieveRobotsFile(String seedURL)
+			throws IOException {
+		String robotsTxt = Jsoup.connect(seedURL + "/robots.txt").get()
+				.toString();
+
 		String[] lines = Jsoup.parse(robotsTxt).text().split("\\s+");
 
 		// Remove comments and empty lines
@@ -35,7 +37,8 @@ public class RobotsParser {
 				RobotRecord record = new RobotRecord(new URL(seedURL));
 				String userAgentName = lines[++i];
 				if (lines[i + 1].equalsIgnoreCase("Sitemap:")) {
-					record.setSiteMapURLs(new URL(seedURL,lines[i + 2]));
+					record.setSiteMapURLs(new URL(seedURL, seedURL
+							+ lines[i + 2]));
 					i = i + 3;
 				} else {
 					while (!lines[i + 1].equalsIgnoreCase("Disallow:")
@@ -47,11 +50,14 @@ public class RobotsParser {
 				while (i < lines.length
 						&& !lines[i].equalsIgnoreCase("User-Agent:")) {
 					if (lines[i].equalsIgnoreCase("Disallow:")) {
-						record.setDisallowedURLs(new URL(seedURL, lines[++i]));
+						record.setDisallowedURLs(new URL(seedURL, seedURL
+								+ lines[++i]));
 					} else if (lines[i].equalsIgnoreCase("Allow:")) {
-						record.setAllowedURLs(new URL(seedURL, lines[++i]));
+						record.setAllowedURLs(new URL(seedURL, seedURL
+								+ lines[++i]));
 					} else if (lines[i].equalsIgnoreCase("Sitemap:")) {
-						record.setSiteMapURLs(new URL(seedURL, lines[++i]));
+						record.setSiteMapURLs(new URL(seedURL, seedURL
+								+ lines[++i]));
 					}
 					i++;
 				}
@@ -61,15 +67,17 @@ public class RobotsParser {
 		}
 	}
 
-	public static ArrayList<URL> getDisallowedURLsForUserAgent(String seedURL, String userAgent) {
+	public static ArrayList<URL> getDisallowedURLsForUserAgent(String seedURL,
+			String userAgent) {
 		RobotRecord record = robotRecords.get(seedURL);
 		if (record.getUserAgent().equals(userAgent)) {
-				return record.getDisallowedURLs();
+			return record.getDisallowedURLs();
 		}
 		return null;
 	}
 
-	public static ArrayList<URL> getAllowedURLsForUserAgent(String seedURL, String userAgent) {
+	public static ArrayList<URL> getAllowedURLsForUserAgent(String seedURL,
+			String userAgent) {
 		RobotRecord record = robotRecords.get(seedURL);
 		if (record.getUserAgent().equals(userAgent)) {
 			return record.getAllowedURLs();
@@ -77,8 +85,10 @@ public class RobotsParser {
 		return null;
 	}
 
-	public static boolean hasAllURLsDisallowedForUserAgent(String seedURL, String userAgent) {
-		ArrayList<URL> disallowedURLs = getDisallowedURLsForUserAgent(seedURL, userAgent);
+	public static boolean hasAllURLsDisallowedForUserAgent(String seedURL,
+			String userAgent) {
+		ArrayList<URL> disallowedURLs = getDisallowedURLsForUserAgent(seedURL,
+				userAgent);
 		for (URL url : disallowedURLs) {
 			if (url.getURL().equals("/")) {
 				return true;
@@ -87,9 +97,10 @@ public class RobotsParser {
 		return false;
 	}
 
-	public static boolean hasURLDisallowedForUserAgent(String seedURL, String userAgent,
-			String crawledURL) {	
-		ArrayList<URL> disallowedURLs = getDisallowedURLsForUserAgent(seedURL, userAgent);
+	public static boolean hasURLDisallowedForUserAgent(String seedURL,
+			String userAgent, String crawledURL) {
+		ArrayList<URL> disallowedURLs = getDisallowedURLsForUserAgent(seedURL,
+				userAgent);
 		for (URL url : disallowedURLs) {
 			if (crawledURL.contains(url.getURL())) {
 				return true;

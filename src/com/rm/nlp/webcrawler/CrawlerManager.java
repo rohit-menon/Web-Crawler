@@ -36,10 +36,18 @@ public class CrawlerManager {
 	 * 
 	 * @throws IOException
 	 */
-	public void beginCrawl() throws IOException, InvalidParameterException {
-		Runnable r = new CrawlerThread();
-		Thread crawlerThread = new Thread(r);
-		crawlerThread.setName("Crawler Thread");
-		crawlerThread.start();
+	public void beginCrawl() throws IOException, InterruptedException {
+		Runnable r1 = new CrawlerThread();
+		Thread crawlerThread1 = new Thread(r1);
+		crawlerThread1.setName("Crawler Thread1");
+		crawlerThread1.start();
+
+
+		Runnable r2 = new CrawlerThread();
+		Thread crawlerThread2 = new Thread(r2);
+		crawlerThread2.setName("Crawler Thread2");
+		Thread.sleep(10000);
+		crawlerThread2.start();
+		
 	}
 }

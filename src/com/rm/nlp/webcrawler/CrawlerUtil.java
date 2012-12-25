@@ -5,6 +5,7 @@ import java.io.IOException;
 import org.jsoup.Connection;
 import org.jsoup.Jsoup;
 
+import com.rm.nlp.webcrawler.robots.RobotRecord;
 import com.rm.nlp.webcrawler.robots.RobotsParser;
 
 public class CrawlerUtil {
@@ -33,6 +34,20 @@ public class CrawlerUtil {
 		if (CrawlerUtil.hasRobotsFile(url)) {
 			RobotsParser.retrieveRobotsFile(url);
 			if (RobotsParser.hasAllURLsDisallowedForUserAgent(url, "*")) {
+				return true;
+			}
+		}
+		return false;
+	}
+	
+	public static boolean isPresent(String url) {
+		for(URL unvisitedURL : CrawlerManager.unvisitedURLs) {
+			if(url.equalsIgnoreCase(unvisitedURL.getURL())) {
+				return true;
+			}
+		}
+		for(URL visitedURL : CrawlerManager.visitedURLs) {
+			if(url.equalsIgnoreCase(visitedURL.getURL())) {
 				return true;
 			}
 		}
